@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     var box1: UIView!
+    var dynamicAnimator: UIDynamicAnimator!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +25,11 @@ class ViewController: UIViewController {
         box1.heightAnchor.constraint(equalToConstant: 150).isActive = true
         box1.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         box1.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
+        
+        let gravityBehavior = UIGravityBehavior(items: [box1])
+        self.dynamicAnimator?.addBehavior(gravityBehavior)
     }
     
 }
