@@ -9,24 +9,26 @@
 import UIKit
 
 class ViewController: UIViewController {
-    var box1: UIView!
+    var ball: UIView!
     var dynamicAnimator: UIDynamicAnimator!
     var snapBehavior: UISnapBehavior?
     var gravityBehavior: UIGravityBehavior?
+    var collissionBehavior: UICollisionBehavior?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = .black
         
-        box1 = UIView(frame: .zero)
-        box1.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(box1)
-        box1.backgroundColor = .blue
-        box1.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        box1.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        box1.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        box1.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        ball = UIView(frame: .zero)
+        ball.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(ball)
+        ball.backgroundColor = .red
+        ball.layer.cornerRadius = 25
+        ball.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        ball.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        ball.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        ball.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         button.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(button)
@@ -42,12 +44,17 @@ class ViewController: UIViewController {
         // we need to put gravity in here because if we put it in view did load, the box may not be drawn yet
         self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
     
-        gravityBehavior = UIGravityBehavior(items: [box1])
+        gravityBehavior = UIGravityBehavior(items: [ball])
         //gravityBehavior.angle = CGFloat.pi/6.0
         if let gravity = gravityBehavior {
-            gravity.gravityDirection = CGVector(dx: -0.1, dy: -0.5)
-        //let windBehavior = UIPushBehavior(items: [box1], mode: .instantaneous)
+            gravity.gravityDirection = CGVector(dx: 0.1, dy: 0.5)
+        //let windBehavior = UIPushBehavior(items: [ball], mode: .instantaneous)
             self.dynamicAnimator?.addBehavior(gravity)
+        }
+        collissionBehavior = UICollisionBehavior(items: [ball])
+        if let collission = collissionBehavior {
+            collission.translatesReferenceBoundsIntoBoundary = true
+            self.dynamicAnimator?.addBehavior(collission)
         }
         //self.dynamicAnimator?.addBehavior(windBehavior)
     }
@@ -56,7 +63,7 @@ class ViewController: UIViewController {
         button.isSelected = !button.isSelected
         
         if button.isSelected {
-            snapBehavior = UISnapBehavior(item: box1, snapTo: self.view.center)
+            snapBehavior = UISnapBehavior(item: ball, snapTo: self.view.center)
             self.dynamicAnimator?.addBehavior(snapBehavior!)
         } else {
             if let behavior = snapBehavior {
@@ -68,7 +75,7 @@ class ViewController: UIViewController {
     internal lazy var button: UIButton = {
         let button = UIButton(frame: .zero)
         button.setTitle("Oh Snap!", for: .normal)
-        button.setTitle("De-Snap", for: .selected)
+        button.setTitle("De-Snap?", for: .selected)
         button.backgroundColor = .white
         button.setTitleColor(.black, for: .normal)
         return button
