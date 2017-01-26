@@ -9,17 +9,22 @@
 import UIKit
 
 class ViewController: UIViewController {
-
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
-  }
-
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
-  }
-
-
+    var box1: UIView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.view.backgroundColor = .black
+        
+        box1 = UIView(frame: .zero)
+        box1.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(box1)
+        box1.backgroundColor = .blue
+        box1.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        box1.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        box1.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        box1.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+    }
+    
 }
 
