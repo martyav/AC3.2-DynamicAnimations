@@ -7,8 +7,10 @@
 //
 
 import UIKit
+import SnapKit
 
 class ViewController: UIViewController {
+    var animator: UIViewPropertyAnimator!
     var ball: UIView!
     var dynamicAnimator: UIDynamicAnimator!
     var snapBehavior: UISnapBehavior?
@@ -19,17 +21,26 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .black
+        self.view.isUserInteractionEnabled = true
         
         ball = UIView(frame: .zero)
         ball.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(ball)
         ball.backgroundColor = .red
-        ball.layer.cornerRadius = 25
-        ball.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        ball.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        ball.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        ball.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        ball.snp.makeConstraints { (view) in
+            view.center.equalToSuperview()
+            view.width.equalTo(50)
+            view.height.equalTo(50)
+        }
         
+        ball.layer.cornerRadius = 25
+        
+        self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
+        self.animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.6) {
+            self.view.layoutIfNeeded()
+        }
+
+        /*
         button.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(button)
         button.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
@@ -38,28 +49,15 @@ class ViewController: UIViewController {
         button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         button.isEnabled = true
         self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
+         */
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        // we need to put gravity in here because if we put it in view did load, the box may not be drawn yet
-        self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
-    
-        gravityBehavior = UIGravityBehavior(items: [ball])
-        //gravityBehavior.angle = CGFloat.pi/6.0
-        if let gravity = gravityBehavior {
-            gravity.gravityDirection = CGVector(dx: 0.1, dy: 0.5)
-        //let windBehavior = UIPushBehavior(items: [ball], mode: .instantaneous)
-            self.dynamicAnimator?.addBehavior(gravity)
-        }
-        collissionBehavior = UICollisionBehavior(items: [ball])
-        if let collission = collissionBehavior {
-            collission.translatesReferenceBoundsIntoBoundary = true
-            self.dynamicAnimator?.addBehavior(collission)
-        }
-        //self.dynamicAnimator?.addBehavior(windBehavior)
+        // we need to put gravity in here because if we put it in view did load, the ball may not be drawn yet
+        
     }
     
-    func snapToCenter(sender: UIButton) {
+    /*func snapToCenter(sender: UIButton) {
         button.isSelected = !button.isSelected
         
         if button.isSelected {
@@ -71,6 +69,60 @@ class ViewController: UIViewController {
             }
         }
     }
+     */
+    
+    internal func move(view: UIView, to point: CGPoint) {
+        animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.6) {
+            self.view.layoutIfNeeded()
+        }
+        
+        view.snp.remakeConstraints { (view) in
+            view.center.equalTo(point)
+            view.size.equalTo(CGSize(width: 50.0, height: 50.0))
+        }
+        
+        animator.addAnimations ({
+            view.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        }, delayFactor: 0.15)
+        
+        animator.addAnimations ({
+            view.transform = CGAffineTransform.identity
+        }, delayFactor: 0.85)
+        
+        animator.startAnimation()
+        
+        gravityBehavior = UIGravityBehavior(items: [ball])
+        
+        if let gravity = gravityBehavior {
+            gravity.gravityDirection = CGVector(dx: 0, dy: 1)
+            self.dynamicAnimator?.addBehavior(gravity)
+        }
+        
+        collissionBehavior = UICollisionBehavior(items: [ball])
+        
+        if let collission = collissionBehavior {
+            collission.translatesReferenceBoundsIntoBoundary = true
+            self.dynamicAnimator?.addBehavior(collission)
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else {
+            print("No touching")
+            return
+        }
+        
+        let touchLocationInView = touch.location(in: view)
+        print("Touch at: \(touchLocationInView)")
+        
+        if ball.frame.contains(touchLocationInView) {
+            print("You touched my ball!")
+            //pickUp(view: ball)
+        }
+        
+        move(view: ball, to: touchLocationInView)
+    }
+    /*
     
     internal lazy var button: UIButton = {
         let button = UIButton(frame: .zero)
@@ -80,4 +132,5 @@ class ViewController: UIViewController {
         button.setTitleColor(.black, for: .normal)
         return button
     }()
+    */
 }
