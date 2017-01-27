@@ -127,13 +127,21 @@ class ViewController: UIViewController {
         })
         SystemSoundID.playFileNamed(fileName: "beep", withExtenstion: "mp3")
         
-        let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
-        let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
-        let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
-        let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+        let randomHue = CGFloat(arc4random_uniform(100)) * 0.01
+        let randomSaturation = CGFloat(arc4random_uniform(100)) * 0.01
+        let randomBrightness = CGFloat(arc4random_uniform(100)) * 0.01
+        //let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+        let color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
         
         view.backgroundColor = color
         button.backgroundColor = color
+        
+        if randomBrightness < 0.3 {
+            button.setTitleColor(.white, for: .normal)
+        } else {
+            button.setTitleColor(.black, for: .normal)
+        }
+        
         self.scoreDisplay.textColor = color
         score += 1
         scoreDisplay.text = String(score)
