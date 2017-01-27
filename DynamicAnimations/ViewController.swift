@@ -10,15 +10,17 @@ import UIKit
 import SnapKit
 import AudioToolbox
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var ball: UIImageView!
     var scoreDisplay: OutlinedText!
     var button: UIButton!
+    
     var animator: UIViewPropertyAnimator? = nil
     var dynamicAnimator: UIDynamicAnimator? = nil
-    var snapBehavior: UISnapBehavior?
-    var gravityBehavior: UIGravityBehavior?
-    var collissionBehavior: UICollisionBehavior?
+    var snapping: UISnapBehavior?
+    var falling: UIGravityBehavior?
+    var colliding: UICollisionBehavior?
+    
     var score = 0
     
     override func viewDidLoad() {
@@ -87,36 +89,39 @@ class ViewController: UIViewController {
         button.setTitleColor(.black, for: .normal)
     }
     
+    // MARK: - Collission Delegate
+    
+    func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
+        print("Contact - \(identifier)")
+        score = 0
+        scoreDisplay.text = String(score)
+    }
+    
     // MARK: - Movement & Behavior
     
     internal func snapToCenter(sender: UIButton) {
         score = 0
         scoreDisplay.text = String(score)
         
-        snapBehavior = UISnapBehavior(item: ball, snapTo: self.view.center)
-        self.dynamicAnimator?.addBehavior(snapBehavior!)
+        snapping = UISnapBehavior(item: ball, snapTo: self.view.center)
+        self.dynamicAnimator?.addBehavior(snapping!)
     }
     
     internal func fall() {
-        gravityBehavior = UIGravityBehavior(items: [ball])
+        falling = UIGravityBehavior(items: [ball])
         
-        gravityBehavior?.gravityDirection = CGVector(dx: 0, dy: 0.7)
-        self.dynamicAnimator?.addBehavior(gravityBehavior!)
+        falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
+        self.dynamicAnimator?.addBehavior(falling!)
         
-        collissionBehavior = UICollisionBehavior(items: [ball])
+        colliding = UICollisionBehavior(items: [ball])
+        colliding?.collisionDelegate = self
         
-        if let collission = collissionBehavior {
+        if let collission = colliding {
             collission.translatesReferenceBoundsIntoBoundary = true
             self.dynamicAnimator?.addBehavior(collission)
         }
         
-        // we need to fix this to set score to 0 every time ball hits bottom
-        let hitBottom = CGPoint(x: ball.frame.midX, y: view.frame.maxY - 50)
-        
-        if ball.frame.contains(hitBottom) {
-            score = 0
-            scoreDisplay.text = String(score)
-        }
+        colliding?.addBoundary(withIdentifier: "bottom" as NSCopying, from: CGPoint(x: view.frame.minX, y: view.frame.maxY), to: CGPoint(x: view.frame.maxX, y: view.frame.maxY))
     }
     
     internal func move(view: UIView, to point: CGPoint) {
