@@ -47,39 +47,35 @@ class ViewController: UIViewController {
             view.top.equalToSuperview()
             view.leading.equalToSuperview().offset(10)
         }
-       
+        
         scoreDisplay.text = String(score)
         scoreDisplay.textColor = .white
         scoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
         
         self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
-        /*
-         button.translatesAutoresizingMaskIntoConstraints = false
-         self.view.addSubview(button)
-         button.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-         button.heightAnchor.constraint(equalToConstant: 90).isActive = true
-         button.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-         button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-         button.isEnabled = true
-         self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
-         */
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(button)
+        button.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0).isActive = true
+        button.topAnchor.constraint(equalTo: view.topAnchor, constant: 16.0).isActive = true
+        
+        button.isEnabled = true
+        self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
     }
-    /*func snapToCenter(sender: UIButton) {
-     button.isSelected = !button.isSelected
-     
-     if button.isSelected {
-     snapBehavior = UISnapBehavior(item: ball, snapTo: self.view.center)
-     self.dynamicAnimator?.addBehavior(snapBehavior!)
-     } else {
-     if let behavior = snapBehavior {
-     self.dynamicAnimator?.removeBehavior(behavior)
-     }
-     }
-     }
-     */
+    
+    func snapToCenter(sender: UIButton) {
+        score = 0
+        scoreDisplay.text = String(score)
+        
+        snapBehavior = UISnapBehavior(item: ball, snapTo: self.view.center)
+        self.dynamicAnimator?.addBehavior(snapBehavior!)
+    }
     
     internal func fall() {
         gravityBehavior = UIGravityBehavior(items: [ball])
@@ -135,7 +131,9 @@ class ViewController: UIViewController {
         let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
         let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
         let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+        
         view.backgroundColor = color
+        button.backgroundColor = color
         self.scoreDisplay.textColor = color
         score += 1
         scoreDisplay.text = String(score)
@@ -177,17 +175,14 @@ class ViewController: UIViewController {
         move(view: ball, to: touch.location(in: view))
     }
     
-    /*
-     
-     internal lazy var button: UIButton = {
-     let button = UIButton(frame: .zero)
-     button.setTitle("Oh Snap!", for: .normal)
-     button.setTitle("De-Snap?", for: .selected)
-     button.backgroundColor = .white
-     button.setTitleColor(.black, for: .normal)
-     return button
-     }()
-     */
+    internal lazy var button: UIButton = {
+        let button = UIButton(frame: .zero)
+        button.setTitle("Reset", for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        return button
+    }()
+    
 }
 
 extension UIImage {
