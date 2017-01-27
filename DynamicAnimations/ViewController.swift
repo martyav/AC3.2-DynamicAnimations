@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import AudioToolbox
 
 class ViewController: UIViewController {
     var ball: UIImageView!
@@ -93,7 +94,7 @@ class ViewController: UIViewController {
             self.dynamicAnimator?.addBehavior(collission)
         }
         
-        let hitBottom = CGPoint(x: ball.center.x, y: view.frame.maxY - 50)
+        let hitBottom = CGPoint(x: ball.frame.midX, y: view.frame.maxY - 50)
         
         if ball.frame.contains(hitBottom) {
             score = 0
@@ -116,7 +117,7 @@ class ViewController: UIViewController {
         }
         
         animator?.addAnimations {
-            view.transform = CGAffineTransform(rotationAngle: 1)
+            view.transform = CGAffineTransform(rotationAngle: 2)
         }
         
         animator?.startAnimation()
@@ -126,15 +127,15 @@ class ViewController: UIViewController {
     
     internal func pickUp(view: UIView) {
         animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
-            let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
-            let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
-            let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
-            let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
-            view.backgroundColor = color
-            self.scoreDisplay.textColor = color
             view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         })
         
+        let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
+        let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
+        let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
+        let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+        view.backgroundColor = color
+        self.scoreDisplay.textColor = color
         score += 1
         scoreDisplay.text = String(score)
         
@@ -213,5 +214,17 @@ class OutlinedText: UILabel {
         
         self.attributedText = NSAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
         super.drawText(in: rect)
+    }
+}
+
+
+// from http://stackoverflow.com/questions/24043904/creating-and-playing-a-sound-in-swift
+extension SystemSoundID {
+    static func playFileNamed(fileName: String, withExtenstion fileExtension: String) {
+        var sound: SystemSoundID = 0
+        if let soundURL = Bundle.main.url(forResource: fileName, withExtension: fileExtension) {
+            AudioServicesCreateSystemSoundID(soundURL as CFURL, &sound)
+            AudioServicesPlaySystemSound(sound)
+        }
     }
 }
