@@ -13,6 +13,7 @@ import AudioToolbox
 class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var ball: UIImageView!
     var scoreDisplay: OutlinedText!
+    var hiScoreDisplay: OutlinedText!
     var button: UIButton!
     
     var animator: UIViewPropertyAnimator? = nil
@@ -22,6 +23,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var colliding: UICollisionBehavior?
     
     var score = 0
+    var hiScore = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,14 +89,39 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         button.setTitle("Reset", for: .normal)
         button.backgroundColor = .white
         button.setTitleColor(.black, for: .normal)
+        
+        // MARK: - HiScore styling
+        
+        hiScoreDisplay = OutlinedText(frame: .zero)
+        hiScoreDisplay.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(hiScoreDisplay)
+        
+        hiScoreDisplay.snp.makeConstraints { (view) in
+            view.height.equalTo(100)
+            view.width.equalTo(350)
+            view.bottom.equalToSuperview()
+            view.trailing.equalTo(self.button)
+        }
+        
+        hiScoreDisplay.text = "High: \(hiScore)"
+        hiScoreDisplay.textAlignment = .right
+        hiScoreDisplay.textColor = .white
+        hiScoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
     }
     
     // MARK: - Collission Delegate
     
     func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
         print("Contact - \(identifier)")
+        
+        if score > hiScore {
+            hiScore = score
+            hiScoreDisplay.text = "High: \(hiScore)"
+        }
+        
         score = 0
         scoreDisplay.text = String(score)
+        
     }
     
     // MARK: - Movement & Behavior
@@ -163,13 +190,14 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         view.backgroundColor = color
         button.backgroundColor = color
         
-        if randomBrightness < 0.3 {
+        if randomBrightness < 0.49 {
             button.setTitleColor(.white, for: .normal)
         } else {
             button.setTitleColor(.black, for: .normal)
         }
         
-        self.scoreDisplay.textColor = color
+        scoreDisplay.textColor = color
+        hiScoreDisplay.textColor = color
         score += 1
         scoreDisplay.text = String(score)
         
