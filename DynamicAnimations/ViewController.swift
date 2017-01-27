@@ -135,6 +135,9 @@ class ViewController: UIViewController {
             view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         })
         
+        score += 1
+        scoreDisplay.text = String(score)
+        
         animator?.startAnimation()
     }
     
@@ -157,8 +160,6 @@ class ViewController: UIViewController {
         
         if ball.frame.contains(touchLocationInView) {
             print("You touched my ball!")
-            score += 1
-            scoreDisplay.text = String(score)
             pickUp(view: ball)
         }
         
