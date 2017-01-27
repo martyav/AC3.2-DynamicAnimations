@@ -129,6 +129,7 @@ class ViewController: UIViewController {
         animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
             view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         })
+        SystemSoundID.playFileNamed(fileName: "beep", withExtenstion: "mp3")
         
         let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
         let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
@@ -228,3 +229,5 @@ extension SystemSoundID {
         }
     }
 }
+
+// sound effect courtesy of https://www.partnersinrhyme.com/soundfx/PUBLIC-DOMAIN-SOUNDS/misc_sounds/beep_beep-spac_wav.shtml
