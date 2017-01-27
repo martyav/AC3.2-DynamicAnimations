@@ -25,8 +25,18 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var score = 0
     var hiScore = 0
     
+    let prefs = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let hiScoreStored = prefs.string(forKey: "hiScoreStored") {
+            print("The user has a high score defined: " + hiScoreStored)
+            hiScore = Int(hiScoreStored)!
+        } else {
+            //Nothing stored in NSUserDefaults yet. Set a value.
+            prefs.setValue(hiScore, forKey: "hiScoreStored")
+        }
         
         self.view.backgroundColor = .black
         self.view.isUserInteractionEnabled = true
@@ -116,6 +126,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         
         if score > hiScore {
             hiScore = score
+            prefs.setValue("\(hiScore)", forKey: "hiScoreStored")
             hiScoreDisplay.text = "High: \(hiScore)"
         }
         
