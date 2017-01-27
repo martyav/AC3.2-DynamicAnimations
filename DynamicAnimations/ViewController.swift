@@ -141,13 +141,14 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         score = 0
         scoreDisplay.text = String(score)
         
+        dynamicAnimator?.removeAllBehaviors()
+        
         snapping = UISnapBehavior(item: ball, snapTo: self.view.center)
         self.dynamicAnimator?.addBehavior(snapping!)
     }
     
     internal func fall() {
         falling = UIGravityBehavior(items: [ball])
-        
         falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
         self.dynamicAnimator?.addBehavior(falling!)
         
@@ -167,7 +168,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             dynamic.removeAllBehaviors()
         }
         
-        animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.6) {
+        animator = UIViewPropertyAnimator(duration: 0.25, dampingRatio: 0.6) {
             self.view.layoutIfNeeded()
         }
         
@@ -187,7 +188,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     
     internal func pickUp(view: UIView) {
         animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
-            view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+            view.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         })
         
         SystemSoundID.playFileNamed(fileName: "beep", withExtenstion: "mp3")
@@ -237,17 +238,27 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         if ball.frame.contains(touchLocationInView) {
             print("You touched my ball!")
             pickUp(view: ball)
+            move(view: ball, to: touchLocationInView)
         }
-        
-        move(view: ball, to: touchLocationInView)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         putDown(view: ball)
+        fall()
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
-        move(view: ball, to: touch.location(in: view))
-    }
+//    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        guard let touch = touches.first else { return }
+//        move(view: ball, to: touch.location(in: view))
+//    }
 }
+
+/*
+ We want the ball to fly in a random x direction when it is clicked...
+ 
+ var randomHorizontal = Double(arc4random_uniform(11)) * 0.01
+ let leftOrRight = Int(arc4random_uniform(2))
+ if leftOrRight % 2 == 0 {
+ randomHorizontal *= -1
+ }
+ */
