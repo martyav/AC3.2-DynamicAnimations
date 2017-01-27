@@ -11,7 +11,7 @@ import SnapKit
 
 class ViewController: UIViewController {
     var ball: UIImageView!
-    var scoreDisplay: UILabel!
+    var scoreDisplay: OutlinedText!
     var animator: UIViewPropertyAnimator? = nil
     var dynamicAnimator: UIDynamicAnimator? = nil
     var snapBehavior: UISnapBehavior?
@@ -37,7 +37,7 @@ class ViewController: UIViewController {
         ball.image = UIImage(imageLiteralResourceName: "disco").alpha(value: 0.5)
         ball.layer.cornerRadius = 50
         
-        scoreDisplay = UILabel(frame: .zero)
+        scoreDisplay = OutlinedText(frame: .zero)
         scoreDisplay.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(scoreDisplay)
         scoreDisplay.snp.makeConstraints { (view) in
@@ -46,9 +46,10 @@ class ViewController: UIViewController {
             view.top.equalToSuperview()
             view.leading.equalToSuperview().offset(10)
         }
-        scoreDisplay.textColor = .white
+       
         scoreDisplay.text = String(score)
-        scoreDisplay.font = UIFont(name: "Futura-Medium", size: 36)
+        scoreDisplay.textColor = .white
+        scoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
         
         self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
         /*
@@ -64,7 +65,6 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-
     }
     /*func snapToCenter(sender: UIButton) {
      button.isSelected = !button.isSelected
@@ -92,7 +92,6 @@ class ViewController: UIViewController {
             collission.translatesReferenceBoundsIntoBoundary = true
             self.dynamicAnimator?.addBehavior(collission)
         }
-        
     }
     
     internal func move(view: UIView, to point: CGPoint) {
@@ -116,6 +115,7 @@ class ViewController: UIViewController {
         animator?.startAnimation()
         
         fall()
+        
     }
     
     internal func pickUp(view: UIView) {
@@ -123,7 +123,9 @@ class ViewController: UIViewController {
             let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
             let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
             let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
-            view.backgroundColor = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+            let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+            view.backgroundColor = color
+            self.scoreDisplay.textColor = color
             view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         })
         
@@ -136,7 +138,6 @@ class ViewController: UIViewController {
         })
         
         animator?.startAnimation()
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -158,13 +159,15 @@ class ViewController: UIViewController {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         putDown(view: ball)
-        
-        let hitBottom = CGPoint(x: ball.center.x, y: view.frame.maxY)
-        
-        if ball.frame.contains(hitBottom) {
-            score += 1
-            scoreDisplay.text = String(score)
-        }
+// this needs to fire the moment the ball hits the bottom...but where to put it?
+//        if !ball.isAnimating {
+//            let hitBottom = CGPoint(x: ball.center.x, y: view.frame.maxY - 50)
+//            
+//            if ball.frame.contains(hitBottom) {
+//                score += 1
+//                scoreDisplay.text = String(score)
+//            }
+//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -193,5 +196,22 @@ extension UIImage {
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return newImage!
+    }
+}
+
+// from http://stackoverflow.com/questions/1103148/how-do-i-make-uilabel-display-outlined-text
+class OutlinedText: UILabel {
+    var outlineWidth: CGFloat = 1
+    var outlineColor: UIColor = .white
+    
+    override func drawText(in rect: CGRect) {
+        
+        let strokeTextAttributes = [
+            NSStrokeColorAttributeName : outlineColor,
+            NSStrokeWidthAttributeName : -1 * outlineWidth, // making this negative gives a border around filled text; postive gives outlined text with a transparent fill
+            ] as [String : Any]
+        
+        self.attributedText = NSAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
+        super.drawText(in: rect)
     }
 }
