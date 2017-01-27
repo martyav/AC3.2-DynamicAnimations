@@ -13,6 +13,7 @@ import AudioToolbox
 class ViewController: UIViewController {
     var ball: UIImageView!
     var scoreDisplay: OutlinedText!
+    var button: UIButton!
     var animator: UIViewPropertyAnimator? = nil
     var dynamicAnimator: UIDynamicAnimator? = nil
     var snapBehavior: UISnapBehavior?
@@ -26,21 +27,37 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .black
         self.view.isUserInteractionEnabled = true
         
+        setUpViews()
+        
+        self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
+        self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
+    }
+    
+    // MARK: - Styling
+    
+    func setUpViews() {
+        // MARK: - Ball styling
+        
         ball = UIImageView(frame: .zero)
         ball.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(ball)
-        ball.backgroundColor = .white
+        
         ball.snp.makeConstraints { (view) in
             view.center.equalToSuperview()
             view.width.equalTo(100)
             view.height.equalTo(100)
         }
+        
         ball.image = UIImage(imageLiteralResourceName: "disco").alpha(value: 0.5)
+        ball.backgroundColor = .white
         ball.layer.cornerRadius = 50
+        
+        // MARK: - Score styling
         
         scoreDisplay = OutlinedText(frame: .zero)
         scoreDisplay.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(scoreDisplay)
+        
         scoreDisplay.snp.makeConstraints { (view) in
             view.height.equalTo(100)
             view.width.equalTo(100)
@@ -52,24 +69,27 @@ class ViewController: UIViewController {
         scoreDisplay.textColor = .white
         scoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
         
-        self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
+        // MARK: - Button styling
         
+        button = UIButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(button)
-        button.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0).isActive = true
-        button.topAnchor.constraint(equalTo: view.topAnchor, constant: 16.0).isActive = true
         
-        button.isEnabled = true
-        self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
+        button.snp.makeConstraints { (view) in
+            view.width.equalTo(120)
+            view.height.equalTo(60)
+            view.trailing.equalToSuperview().inset(16)
+            view.top.equalToSuperview().offset(16)
+        }
         
+        button.setTitle("Reset", for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-    }
+    // MARK: - Movement & Behavior
     
-    func snapToCenter(sender: UIButton) {
+    internal func snapToCenter(sender: UIButton) {
         score = 0
         scoreDisplay.text = String(score)
         
@@ -90,6 +110,7 @@ class ViewController: UIViewController {
             self.dynamicAnimator?.addBehavior(collission)
         }
         
+        // we need to fix this to set score to 0 every time ball hits bottom
         let hitBottom = CGPoint(x: ball.frame.midX, y: view.frame.maxY - 50)
         
         if ball.frame.contains(hitBottom) {
@@ -125,6 +146,7 @@ class ViewController: UIViewController {
         animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
             view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         })
+        
         SystemSoundID.playFileNamed(fileName: "beep", withExtenstion: "mp3")
         
         let randomHue = CGFloat(arc4random_uniform(100)) * 0.01
@@ -157,6 +179,8 @@ class ViewController: UIViewController {
         animator?.startAnimation()
     }
     
+    // MARK: - Observing touches
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else {
             print("No touching")
@@ -182,55 +206,4 @@ class ViewController: UIViewController {
         guard let touch = touches.first else { return }
         move(view: ball, to: touch.location(in: view))
     }
-    
-    internal lazy var button: UIButton = {
-        let button = UIButton(frame: .zero)
-        button.setTitle("Reset", for: .normal)
-        button.backgroundColor = .white
-        button.setTitleColor(.black, for: .normal)
-        return button
-    }()
-    
 }
-
-extension UIImage {
-    // from http://stackoverflow.com/questions/28517866/how-to-set-the-alpha-of-a-uiimage-in-swift-programmatically
-    func alpha(value:CGFloat)->UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        draw(at: CGPoint.zero, blendMode: .normal, alpha: value)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return newImage!
-    }
-}
-
-// from http://stackoverflow.com/questions/1103148/how-do-i-make-uilabel-display-outlined-text
-class OutlinedText: UILabel {
-    var outlineWidth: CGFloat = 1
-    var outlineColor: UIColor = .white
-    
-    override func drawText(in rect: CGRect) {
-        
-        let strokeTextAttributes = [
-            NSStrokeColorAttributeName : outlineColor,
-            NSStrokeWidthAttributeName : -1 * outlineWidth, // making this negative gives a border around filled text; postive gives outlined text with a transparent fill
-            ] as [String : Any]
-        
-        self.attributedText = NSAttributedString(string: self.text ?? "", attributes: strokeTextAttributes)
-        super.drawText(in: rect)
-    }
-}
-
-
-// from http://stackoverflow.com/questions/24043904/creating-and-playing-a-sound-in-swift
-extension SystemSoundID {
-    static func playFileNamed(fileName: String, withExtenstion fileExtension: String) {
-        var sound: SystemSoundID = 0
-        if let soundURL = Bundle.main.url(forResource: fileName, withExtension: fileExtension) {
-            AudioServicesCreateSystemSoundID(soundURL as CFURL, &sound)
-            AudioServicesPlaySystemSound(sound)
-        }
-    }
-}
-
-// sound effect courtesy of https://www.partnersinrhyme.com/soundfx/PUBLIC-DOMAIN-SOUNDS/misc_sounds/beep_beep-spac_wav.shtml
