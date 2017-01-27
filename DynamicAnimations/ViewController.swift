@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
-    var animator: UIViewPropertyAnimator!
+    var animator: UIViewPropertyAnimator? = nil
     var ball: UIView!
-    var dynamicAnimator: UIDynamicAnimator!
+    var dynamicAnimator: UIDynamicAnimator? = nil
     var snapBehavior: UISnapBehavior?
     var gravityBehavior: UIGravityBehavior?
     var collissionBehavior: UICollisionBehavior?
@@ -39,39 +39,40 @@ class ViewController: UIViewController {
         self.animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.6) {
             self.view.layoutIfNeeded()
         }
-
         /*
-        button.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(button)
-        button.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 90).isActive = true
-        button.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        button.isEnabled = true
-        self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
+         button.translatesAutoresizingMaskIntoConstraints = false
+         self.view.addSubview(button)
+         button.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+         button.heightAnchor.constraint(equalToConstant: 90).isActive = true
+         button.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+         button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+         button.isEnabled = true
+         self.button.addTarget(self, action: #selector(snapToCenter(sender:)), for: .touchUpInside)
          */
     }
     
     override func viewDidAppear(_ animated: Bool) {
         // we need to put gravity in here because if we put it in view did load, the ball may not be drawn yet
-        
     }
-    
     /*func snapToCenter(sender: UIButton) {
-        button.isSelected = !button.isSelected
-        
-        if button.isSelected {
-            snapBehavior = UISnapBehavior(item: ball, snapTo: self.view.center)
-            self.dynamicAnimator?.addBehavior(snapBehavior!)
-        } else {
-            if let behavior = snapBehavior {
-                self.dynamicAnimator?.removeBehavior(behavior)
-            }
-        }
-    }
+     button.isSelected = !button.isSelected
+     
+     if button.isSelected {
+     snapBehavior = UISnapBehavior(item: ball, snapTo: self.view.center)
+     self.dynamicAnimator?.addBehavior(snapBehavior!)
+     } else {
+     if let behavior = snapBehavior {
+     self.dynamicAnimator?.removeBehavior(behavior)
+     }
+     }
+     }
      */
     
     internal func move(view: UIView, to point: CGPoint) {
+        if let dynamic = self.dynamicAnimator {
+            dynamic.removeAllBehaviors()
+        }
+        
         animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.6) {
             self.view.layoutIfNeeded()
         }
@@ -81,22 +82,20 @@ class ViewController: UIViewController {
             view.size.equalTo(CGSize(width: 50.0, height: 50.0))
         }
         
-        animator.addAnimations ({
+        animator?.addAnimations ({
             view.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
         }, delayFactor: 0.15)
         
-        animator.addAnimations ({
+        animator?.addAnimations ({
             view.transform = CGAffineTransform.identity
         }, delayFactor: 0.85)
         
-        animator.startAnimation()
+        animator?.startAnimation()
         
         gravityBehavior = UIGravityBehavior(items: [ball])
         
-        if let gravity = gravityBehavior {
-            gravity.gravityDirection = CGVector(dx: 0, dy: 1)
-            self.dynamicAnimator?.addBehavior(gravity)
-        }
+        gravityBehavior?.gravityDirection = CGVector(dx: 0, dy: 1)
+        self.dynamicAnimator?.addBehavior(gravityBehavior!)
         
         collissionBehavior = UICollisionBehavior(items: [ball])
         
@@ -122,15 +121,16 @@ class ViewController: UIViewController {
         
         move(view: ball, to: touchLocationInView)
     }
-    /*
     
-    internal lazy var button: UIButton = {
-        let button = UIButton(frame: .zero)
-        button.setTitle("Oh Snap!", for: .normal)
-        button.setTitle("De-Snap?", for: .selected)
-        button.backgroundColor = .white
-        button.setTitleColor(.black, for: .normal)
-        return button
-    }()
-    */
+    /*
+     
+     internal lazy var button: UIButton = {
+     let button = UIButton(frame: .zero)
+     button.setTitle("Oh Snap!", for: .normal)
+     button.setTitle("De-Snap?", for: .selected)
+     button.backgroundColor = .white
+     button.setTitleColor(.black, for: .normal)
+     return button
+     }()
+     */
 }
