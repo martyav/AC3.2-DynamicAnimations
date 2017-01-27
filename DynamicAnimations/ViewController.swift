@@ -92,6 +92,13 @@ class ViewController: UIViewController {
             collission.translatesReferenceBoundsIntoBoundary = true
             self.dynamicAnimator?.addBehavior(collission)
         }
+        
+        let hitBottom = CGPoint(x: ball.center.x, y: view.frame.maxY - 50)
+        
+        if ball.frame.contains(hitBottom) {
+            score = 0
+            scoreDisplay.text = String(score)
+        }
     }
     
     internal func move(view: UIView, to point: CGPoint) {
@@ -115,7 +122,6 @@ class ViewController: UIViewController {
         animator?.startAnimation()
         
         fall()
-        
     }
     
     internal func pickUp(view: UIView) {
@@ -151,6 +157,8 @@ class ViewController: UIViewController {
         
         if ball.frame.contains(touchLocationInView) {
             print("You touched my ball!")
+            score += 1
+            scoreDisplay.text = String(score)
             pickUp(view: ball)
         }
         
@@ -159,15 +167,6 @@ class ViewController: UIViewController {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         putDown(view: ball)
-// this needs to fire the moment the ball hits the bottom...but where to put it?
-//        if !ball.isAnimating {
-//            let hitBottom = CGPoint(x: ball.center.x, y: view.frame.maxY - 50)
-//            
-//            if ball.frame.contains(hitBottom) {
-//                score += 1
-//                scoreDisplay.text = String(score)
-//            }
-//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
