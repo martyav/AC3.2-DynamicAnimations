@@ -21,6 +21,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var snapping: UISnapBehavior?
     var falling: UIGravityBehavior?
     var colliding: UICollisionBehavior?
+    var pushing: UIPushBehavior?
     
     var score = 0
     var hiScore = 0
@@ -147,6 +148,22 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         self.dynamicAnimator?.addBehavior(snapping!)
     }
     
+    internal func push() {
+        pushing = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.instantaneous)
+        
+        var randomAngle = CGFloat(arc4random_uniform(11)) * 0.01
+        let leftOrRight = Int(arc4random_uniform(2))
+        if leftOrRight % 2 == 0 {
+            randomAngle *= -1
+        }
+        
+        pushing?.setAngle(randomAngle, magnitude: 0.3)
+        
+        self.dynamicAnimator?.addBehavior(pushing!)
+        
+        fall()
+    }
+    
     internal func fall() {
         falling = UIGravityBehavior(items: [ball])
         falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
@@ -239,6 +256,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             print("You touched my ball!")
             pickUp(view: ball)
             move(view: ball, to: touchLocationInView)
+            push()
         }
     }
     
@@ -256,9 +274,5 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
 /*
  We want the ball to fly in a random x direction when it is clicked...
  
- var randomHorizontal = Double(arc4random_uniform(11)) * 0.01
- let leftOrRight = Int(arc4random_uniform(2))
- if leftOrRight % 2 == 0 {
- randomHorizontal *= -1
- }
+
  */
