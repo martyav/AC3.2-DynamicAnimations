@@ -10,8 +10,8 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
-    var animator: UIViewPropertyAnimator? = nil
     var ball: UIView!
+    var animator: UIViewPropertyAnimator? = nil
     var dynamicAnimator: UIDynamicAnimator? = nil
     var snapBehavior: UISnapBehavior?
     var gravityBehavior: UIGravityBehavior?
@@ -36,9 +36,6 @@ class ViewController: UIViewController {
         ball.layer.cornerRadius = 25
         
         self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
-        self.animator = UIViewPropertyAnimator(duration: 0.5, dampingRatio: 0.6) {
-            self.view.layoutIfNeeded()
-        }
         /*
          button.translatesAutoresizingMaskIntoConstraints = false
          self.view.addSubview(button)
@@ -52,7 +49,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        // we need to put gravity in here because if we put it in view did load, the ball may not be drawn yet
+        
     }
     /*func snapToCenter(sender: UIButton) {
      button.isSelected = !button.isSelected
@@ -68,6 +65,20 @@ class ViewController: UIViewController {
      }
      */
     
+    internal func fall() {
+        gravityBehavior = UIGravityBehavior(items: [ball])
+        
+        gravityBehavior?.gravityDirection = CGVector(dx: 0, dy: 1)
+        self.dynamicAnimator?.addBehavior(gravityBehavior!)
+        
+        collissionBehavior = UICollisionBehavior(items: [ball])
+        
+        if let collission = collissionBehavior {
+            collission.translatesReferenceBoundsIntoBoundary = true
+            self.dynamicAnimator?.addBehavior(collission)
+        }
+    }
+    
     internal func move(view: UIView, to point: CGPoint) {
         if let dynamic = self.dynamicAnimator {
             dynamic.removeAllBehaviors()
@@ -82,27 +93,29 @@ class ViewController: UIViewController {
             view.size.equalTo(CGSize(width: 50.0, height: 50.0))
         }
         
-        animator?.addAnimations ({
-            view.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-        }, delayFactor: 0.15)
-        
-        animator?.addAnimations ({
-            view.transform = CGAffineTransform.identity
-        }, delayFactor: 0.85)
-        
         animator?.startAnimation()
         
-        gravityBehavior = UIGravityBehavior(items: [ball])
+        fall()
+    }
+    
+    internal func pickUp(view: UIView) {
+        self.animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
+            let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
+            let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
+            let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
+            view.backgroundColor = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+            view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        })
         
-        gravityBehavior?.gravityDirection = CGVector(dx: 0, dy: 1)
-        self.dynamicAnimator?.addBehavior(gravityBehavior!)
+        animator?.startAnimation()
+    }
+    
+    internal func putDown(view: UIView) {
+        animator = UIViewPropertyAnimator(duration: 0.15, curve: .easeIn, animations: {
+            view.transform = CGAffineTransform.identity
+        })
         
-        collissionBehavior = UICollisionBehavior(items: [ball])
-        
-        if let collission = collissionBehavior {
-            collission.translatesReferenceBoundsIntoBoundary = true
-            self.dynamicAnimator?.addBehavior(collission)
-        }
+        animator?.startAnimation()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -116,10 +129,19 @@ class ViewController: UIViewController {
         
         if ball.frame.contains(touchLocationInView) {
             print("You touched my ball!")
-            //pickUp(view: ball)
+            pickUp(view: ball)
         }
         
         move(view: ball, to: touchLocationInView)
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        putDown(view: ball)
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        move(view: ball, to: touch.location(in: view))
     }
     
     /*
