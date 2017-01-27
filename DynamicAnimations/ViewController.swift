@@ -64,7 +64,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
+
     }
     /*func snapToCenter(sender: UIButton) {
      button.isSelected = !button.isSelected
@@ -83,7 +83,7 @@ class ViewController: UIViewController {
     internal func fall() {
         gravityBehavior = UIGravityBehavior(items: [ball])
         
-        gravityBehavior?.gravityDirection = CGVector(dx: 0, dy: 1)
+        gravityBehavior?.gravityDirection = CGVector(dx: 0, dy: 0.7)
         self.dynamicAnimator?.addBehavior(gravityBehavior!)
         
         collissionBehavior = UICollisionBehavior(items: [ball])
@@ -92,6 +92,7 @@ class ViewController: UIViewController {
             collission.translatesReferenceBoundsIntoBoundary = true
             self.dynamicAnimator?.addBehavior(collission)
         }
+        
     }
     
     internal func move(view: UIView, to point: CGPoint) {
@@ -135,6 +136,7 @@ class ViewController: UIViewController {
         })
         
         animator?.startAnimation()
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -156,6 +158,13 @@ class ViewController: UIViewController {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         putDown(view: ball)
+        
+        let hitBottom = CGPoint(x: ball.center.x, y: view.frame.maxY)
+        
+        if ball.frame.contains(hitBottom) {
+            score += 1
+            scoreDisplay.text = String(score)
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
