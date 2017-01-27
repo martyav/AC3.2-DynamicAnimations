@@ -11,6 +11,7 @@
 		14C6F3011E3A6732001406B6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14C6F3001E3A6732001406B6 /* ViewController.swift */; };
 		14C6F3061E3A6732001406B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 14C6F3051E3A6732001406B6 /* Assets.xcassets */; };
 		14C6F3091E3A6732001406B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 14C6F3071E3A6732001406B6 /* LaunchScreen.storyboard */; };
+		D3974E3D1E3AFCEB00659F89 /* discoBall.png in Resources */ = {isa = PBXBuildFile; fileRef = D3974E3C1E3AFCEB00659F89 /* discoBall.png */; };
 		EF2DC6F15C388D7BCE161259 /* Pods_DynamicAnimations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 642AC9FC6612752B8BC24742 /* Pods_DynamicAnimations.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		14C6F30A1E3A6732001406B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5A664D6E98E3469038D4A647 /* Pods-DynamicAnimations.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicAnimations.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicAnimations/Pods-DynamicAnimations.debug.xcconfig"; sourceTree = "<group>"; };
 		642AC9FC6612752B8BC24742 /* Pods_DynamicAnimations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DynamicAnimations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3974E3C1E3AFCEB00659F89 /* discoBall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = discoBall.png; sourceTree = "<group>"; };
 		E0C518282A1B18E4539163F1 /* Pods-DynamicAnimations.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicAnimations.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicAnimations/Pods-DynamicAnimations.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -62,6 +64,7 @@
 				14C6F2FE1E3A6732001406B6 /* AppDelegate.swift */,
 				14C6F3001E3A6732001406B6 /* ViewController.swift */,
 				14C6F3051E3A6732001406B6 /* Assets.xcassets */,
+				D3974E3C1E3AFCEB00659F89 /* discoBall.png */,
 				14C6F3071E3A6732001406B6 /* LaunchScreen.storyboard */,
 				14C6F30A1E3A6732001406B6 /* Info.plist */,
 			);
@@ -148,6 +151,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3974E3D1E3AFCEB00659F89 /* discoBall.png in Resources */,
 				14C6F3091E3A6732001406B6 /* LaunchScreen.storyboard in Resources */,
 				14C6F3061E3A6732001406B6 /* Assets.xcassets in Resources */,
 			);

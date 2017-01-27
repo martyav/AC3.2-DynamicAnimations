@@ -10,12 +10,14 @@ import UIKit
 import SnapKit
 
 class ViewController: UIViewController {
-    var ball: UIView!
+    var ball: UIImageView!
+    var scoreDisplay: UILabel!
     var animator: UIViewPropertyAnimator? = nil
     var dynamicAnimator: UIDynamicAnimator? = nil
     var snapBehavior: UISnapBehavior?
     var gravityBehavior: UIGravityBehavior?
     var collissionBehavior: UICollisionBehavior?
+    var score = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,17 +25,30 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .black
         self.view.isUserInteractionEnabled = true
         
-        ball = UIView(frame: .zero)
+        ball = UIImageView(frame: .zero)
         ball.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(ball)
-        ball.backgroundColor = .red
+        ball.backgroundColor = .white
         ball.snp.makeConstraints { (view) in
             view.center.equalToSuperview()
-            view.width.equalTo(50)
-            view.height.equalTo(50)
+            view.width.equalTo(100)
+            view.height.equalTo(100)
         }
+        ball.image = UIImage(imageLiteralResourceName: "disco").alpha(value: 0.5)
+        ball.layer.cornerRadius = 50
         
-        ball.layer.cornerRadius = 25
+        scoreDisplay = UILabel(frame: .zero)
+        scoreDisplay.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(scoreDisplay)
+        scoreDisplay.snp.makeConstraints { (view) in
+            view.height.equalTo(100)
+            view.width.equalTo(100)
+            view.top.equalToSuperview()
+            view.leading.equalToSuperview().offset(10)
+        }
+        scoreDisplay.textColor = .white
+        scoreDisplay.text = String(score)
+        scoreDisplay.font = UIFont(name: "Futura-Medium", size: 36)
         
         self.dynamicAnimator = UIDynamicAnimator(referenceView: view)
         /*
@@ -90,7 +105,11 @@ class ViewController: UIViewController {
         
         view.snp.remakeConstraints { (view) in
             view.center.equalTo(point)
-            view.size.equalTo(CGSize(width: 50.0, height: 50.0))
+            view.size.equalTo(CGSize(width: 100, height: 100))
+        }
+        
+        animator?.addAnimations {
+            view.transform = CGAffineTransform(rotationAngle: 1)
         }
         
         animator?.startAnimation()
@@ -99,7 +118,7 @@ class ViewController: UIViewController {
     }
     
     internal func pickUp(view: UIView) {
-        self.animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
+        animator = UIViewPropertyAnimator(duration: 1, curve: .easeIn, animations: {
             let randomRed = CGFloat(arc4random_uniform(100)) * 0.01
             let randomGreen = CGFloat(arc4random_uniform(100)) * 0.01
             let randomBlue = CGFloat(arc4random_uniform(100)) * 0.01
@@ -155,4 +174,15 @@ class ViewController: UIViewController {
      return button
      }()
      */
+}
+
+extension UIImage {
+    // from http://stackoverflow.com/questions/28517866/how-to-set-the-alpha-of-a-uiimage-in-swift-programmatically
+    func alpha(value:CGFloat)->UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        draw(at: CGPoint.zero, blendMode: .normal, alpha: value)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
+    }
 }
