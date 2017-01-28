@@ -131,15 +131,17 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
         print("Contact - \(identifier)")
         
-        if score > hiScore {
-            hiScore = score
-            prefs.setValue("\(hiScore)", forKey: "hiScoreStored")
-            hiScoreDisplay.text = "High: \(hiScore)"
+        // this only works because bottom is the only boundary with an identifier...if we add more boundaries with identifiers, we'll have to eff around with this & NSCopying
+        if identifier != nil {
+            if score > hiScore {
+                hiScore = score
+                prefs.setValue("\(hiScore)", forKey: "hiScoreStored")
+                hiScoreDisplay.text = "High: \(hiScore)"
+            }
+            
+            score = 0
+            scoreDisplay.text = String(score)
         }
-        
-        score = 0
-        scoreDisplay.text = String(score)
-        
     }
     
     // MARK: - Movement & Behavior
@@ -148,13 +150,19 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         score = 0
         scoreDisplay.text = String(score)
         
-        dynamicAnimator?.removeAllBehaviors()
+        if let dynamic = self.dynamicAnimator {
+            dynamic.removeAllBehaviors()
+        }
         
         snapping = UISnapBehavior(item: ball, snapTo: self.view.center)
         self.dynamicAnimator?.addBehavior(snapping!)
     }
     
     internal func fall() {
+        if let dynamic = self.dynamicAnimator {
+            dynamic.removeAllBehaviors()
+        }
+        
         falling = UIGravityBehavior(items: [ball])
         falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
         self.dynamicAnimator?.addBehavior(falling!)
