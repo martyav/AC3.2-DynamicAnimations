@@ -39,7 +39,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             print("The user has a high score defined: " + hiScoreStored)
             hiScore = Int(hiScoreStored)!
         } else {
-            //Nothing stored in NSUserDefaults yet. Set a value.
+         //   Nothing stored in NSUserDefaults yet. Set a value.
             prefs.setValue(hiScore, forKey: "hiScoreStored")
         }
         
@@ -94,14 +94,14 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         
         scoreDisplay.snp.makeConstraints { (view) in
             view.height.equalTo(100)
-            view.width.equalTo(100)
+            view.width.equalTo(200)
             view.top.equalToSuperview()
             view.leading.equalToSuperview().offset(10)
         }
         
         scoreDisplay.text = String(score)
         scoreDisplay.textColor = .white
-        scoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
+        scoreDisplay.font = UIFont(name: "DS-Digital-Bold", size: 72)
         
         // MARK: - Button styling
         
@@ -136,9 +136,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         hiScoreDisplay.text = "High: \(hiScore)"
         hiScoreDisplay.textAlignment = .right
         hiScoreDisplay.textColor = .white
-        hiScoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
+        hiScoreDisplay.font = UIFont(name: "DS-Digital-Bold", size: 72)
     }
-    
     
     override func viewDidAppear(_ animated: Bool) {
     }
@@ -238,7 +237,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         //let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
         color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
         
-        view.backgroundColor = color
         button.backgroundColor = color
         
         if randomBrightness < 0.49 {
@@ -285,16 +283,15 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
                 randomPush *= -1
             }
             
-            move(view: ball, to: CGPoint(x: touchLocationInView.x + randomPush, y: touchLocationInView.y - 100))
+            move(view: ball, to: CGPoint(x: touchLocationInView.x + randomPush, y: touchLocationInView.y - 100 + randomPush))
             
-            if score > hiScore {
-                animator = UIViewPropertyAnimator(duration: 0.25, curve: .linear) {
-                    self.view.backgroundColor = self.color
-                }
-                animator?.startAnimation()
-                
-                self.view.backgroundColor = .black
+            animator = UIViewPropertyAnimator(duration: 0.25, curve: .linear) {
+                self.backgroundImage.backgroundColor = self.color
             }
+            
+            animator?.startAnimation()
+            
+            backgroundImage.backgroundColor = .black
         }
     }
     
