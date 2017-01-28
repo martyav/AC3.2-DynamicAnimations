@@ -16,6 +16,7 @@
 		D3974E471E3BCEC200659F89 /* SystemSoundID+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3974E461E3BCEC200659F89 /* SystemSoundID+.swift */; };
 		D3974E491E3BCEF700659F89 /* OutlinedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3974E481E3BCEF700659F89 /* OutlinedText.swift */; };
 		D3974E4B1E3BCF1E00659F89 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3974E4A1E3BCF1E00659F89 /* UIImage+.swift */; };
+		D3974E4F1E3C568600659F89 /* cat-962733_1280.png in Resources */ = {isa = PBXBuildFile; fileRef = D3974E4E1E3C568600659F89 /* cat-962733_1280.png */; };
 		EF2DC6F15C388D7BCE161259 /* Pods_DynamicAnimations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 642AC9FC6612752B8BC24742 /* Pods_DynamicAnimations.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		D3974E461E3BCEC200659F89 /* SystemSoundID+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "SystemSoundID+.swift"; path = "DynamicAnimations/SystemSoundID+.swift"; sourceTree = "<group>"; };
 		D3974E481E3BCEF700659F89 /* OutlinedText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OutlinedText.swift; path = DynamicAnimations/OutlinedText.swift; sourceTree = "<group>"; };
 		D3974E4A1E3BCF1E00659F89 /* UIImage+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIImage+.swift"; path = "DynamicAnimations/UIImage+.swift"; sourceTree = "<group>"; };
+		D3974E4E1E3C568600659F89 /* cat-962733_1280.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cat-962733_1280.png"; sourceTree = "<group>"; };
 		E0C518282A1B18E4539163F1 /* Pods-DynamicAnimations.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicAnimations.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicAnimations/Pods-DynamicAnimations.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +103,7 @@
 				D3974E4A1E3BCF1E00659F89 /* UIImage+.swift */,
 				D3974E481E3BCEF700659F89 /* OutlinedText.swift */,
 				14C6F3051E3A6732001406B6 /* Assets.xcassets */,
+				D3974E4E1E3C568600659F89 /* cat-962733_1280.png */,
 				D3974E3C1E3AFCEB00659F89 /* discoBall.png */,
 				14C6F3071E3A6732001406B6 /* LaunchScreen.storyboard */,
 				D3974E461E3BCEC200659F89 /* SystemSoundID+.swift */,
@@ -184,6 +187,7 @@
 				D3974E3D1E3AFCEB00659F89 /* discoBall.png in Resources */,
 				D3974E451E3B9A5A00659F89 /* beep.mp3 in Resources */,
 				14C6F3091E3A6732001406B6 /* LaunchScreen.storyboard in Resources */,
+				D3974E4F1E3C568600659F89 /* cat-962733_1280.png in Resources */,
 				14C6F3061E3A6732001406B6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

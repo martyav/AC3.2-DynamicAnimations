@@ -11,6 +11,9 @@ import SnapKit
 import AudioToolbox
 
 class ViewController: UIViewController, UICollisionBehaviorDelegate {
+    var color = UIColor.black
+    var backgroundImage: UIImageView!
+    
     var ball: UIImageView!
     var scoreDisplay: OutlinedText!
     var hiScoreDisplay: OutlinedText!
@@ -22,7 +25,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var falling: UIGravityBehavior?
     var colliding: UICollisionBehavior?
     var pushing: UIPushBehavior?
-    
     var dynamicPhysics: UIDynamicItemBehavior!
     
     var score = 0
@@ -41,7 +43,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             prefs.setValue(hiScore, forKey: "hiScoreStored")
         }
         
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = color
         self.view.isUserInteractionEnabled = true
         
         setUpViews()
@@ -53,6 +55,21 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: - Styling
     
     func setUpViews() {
+        // bg image
+        
+        backgroundImage = UIImageView(frame: .zero)
+        backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(backgroundImage)
+        
+        backgroundImage.snp.makeConstraints { (view) in
+            view.center.equalToSuperview()
+            view.width.equalToSuperview()
+            view.height.equalToSuperview()
+        }
+        
+        backgroundImage.image = UIImage(imageLiteralResourceName: "cat").alpha(value: 0.1)
+        backgroundImage.backgroundColor = color
+        
         // MARK: - Ball styling
         
         ball = UIImageView(frame: .zero)
@@ -178,7 +195,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         colliding?.addBoundary(withIdentifier: "bottom" as NSCopying, from: CGPoint(x: view.frame.minX, y: view.frame.maxY), to: CGPoint(x: view.frame.maxX, y: view.frame.maxY))
         
         self.dynamicPhysics = UIDynamicItemBehavior(items: [ball])
-        dynamicPhysics.density = 0.5
+        dynamicPhysics.density = 0.1
         dynamicPhysics.allowsRotation = true
         dynamicPhysics.elasticity = 0.9
         dynamicPhysics.addAngularVelocity(7.0, for: ball)
@@ -219,7 +236,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         let randomSaturation = CGFloat(arc4random_uniform(100)) * 0.01
         let randomBrightness = CGFloat(arc4random_uniform(100)) * 0.01
         //let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
-        let color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
+        color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
         
         view.backgroundColor = color
         button.backgroundColor = color
@@ -261,7 +278,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             print("You touched my ball!")
             pickUp(view: ball)
             
-            var randomPush = CGFloat(arc4random_uniform(100))
+            var randomPush = CGFloat(arc4random_uniform(75))
             let leftOrRight = CGFloat(arc4random_uniform(2))
             
             if leftOrRight == 1 {
@@ -272,9 +289,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             
             if score > hiScore {
                 animator = UIViewPropertyAnimator(duration: 0.25, curve: .linear) {
-                    self.view.backgroundColor = .white
+                    self.view.backgroundColor = self.color
                 }
-                
                 animator?.startAnimation()
                 
                 self.view.backgroundColor = .black
