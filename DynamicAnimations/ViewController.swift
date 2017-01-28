@@ -23,6 +23,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var colliding: UICollisionBehavior?
     var pushing: UIPushBehavior?
     
+    var dynamicPhysics: UIDynamicItemBehavior!
+    
     var score = 0
     var hiScore = 0
     
@@ -120,6 +122,10 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         hiScoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
     }
     
+    
+    override func viewDidAppear(_ animated: Bool) {
+    }
+    
     // MARK: - Collission Delegate
     
     func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
@@ -148,22 +154,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         self.dynamicAnimator?.addBehavior(snapping!)
     }
     
-    internal func push() {
-        pushing = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.instantaneous)
-        
-        var randomAngle = CGFloat(arc4random_uniform(11)) * 0.01
-        let leftOrRight = Int(arc4random_uniform(2))
-        if leftOrRight % 2 == 0 {
-            randomAngle *= -1
-        }
-        
-        pushing?.setAngle(randomAngle, magnitude: 0.3)
-        
-        self.dynamicAnimator?.addBehavior(pushing!)
-        
-        fall()
-    }
-    
     internal func fall() {
         falling = UIGravityBehavior(items: [ball])
         falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
@@ -178,6 +168,13 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
         
         colliding?.addBoundary(withIdentifier: "bottom" as NSCopying, from: CGPoint(x: view.frame.minX, y: view.frame.maxY), to: CGPoint(x: view.frame.maxX, y: view.frame.maxY))
+        
+        self.dynamicPhysics = UIDynamicItemBehavior(items: [ball])
+        dynamicPhysics.density = 0.5
+        dynamicPhysics.allowsRotation = true
+        dynamicPhysics.elasticity = 0.9
+        dynamicPhysics.addAngularVelocity(7.0, for: ball)
+        dynamicAnimator?.addBehavior(dynamicPhysics)
     }
     
     internal func move(view: UIView, to point: CGPoint) {
@@ -255,8 +252,15 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         if ball.frame.contains(touchLocationInView) {
             print("You touched my ball!")
             pickUp(view: ball)
-            move(view: ball, to: touchLocationInView)
-            push()
+            
+            var randomPush = CGFloat(arc4random_uniform(100))
+            let leftOrRight = CGFloat(arc4random_uniform(2))
+            
+            if leftOrRight == 1 {
+                randomPush *= -1
+            }
+            
+            move(view: ball, to: CGPoint(x: touchLocationInView.x + randomPush, y: touchLocationInView.y - 100))
         }
     }
     
@@ -264,15 +268,4 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         putDown(view: ball)
         fall()
     }
-    
-//    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else { return }
-//        move(view: ball, to: touch.location(in: view))
-//    }
 }
-
-/*
- We want the ball to fly in a random x direction when it is clicked...
- 
-
- */
