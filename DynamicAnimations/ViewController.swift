@@ -11,6 +11,9 @@ import SnapKit
 import AudioToolbox
 
 class ViewController: UIViewController, UICollisionBehaviorDelegate {
+    var color = UIColor.black
+    var backgroundImage: UIImageView!
+    
     var ball: UIImageView!
     var scoreDisplay: OutlinedText!
     var hiScoreDisplay: OutlinedText!
@@ -21,6 +24,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var snapping: UISnapBehavior?
     var falling: UIGravityBehavior?
     var colliding: UICollisionBehavior?
+    var pushing: UIPushBehavior?
+    var dynamicPhysics: UIDynamicItemBehavior!
     
     var score = 0
     var hiScore = 0
@@ -34,11 +39,11 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             print("The user has a high score defined: " + hiScoreStored)
             hiScore = Int(hiScoreStored)!
         } else {
-            //Nothing stored in NSUserDefaults yet. Set a value.
+         //   Nothing stored in NSUserDefaults yet. Set a value.
             prefs.setValue(hiScore, forKey: "hiScoreStored")
         }
         
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = color
         self.view.isUserInteractionEnabled = true
         
         setUpViews()
@@ -50,6 +55,21 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: - Styling
     
     func setUpViews() {
+        // bg image
+        
+        backgroundImage = UIImageView(frame: .zero)
+        backgroundImage.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(backgroundImage)
+        
+        backgroundImage.snp.makeConstraints { (view) in
+            view.center.equalToSuperview()
+            view.width.equalToSuperview()
+            view.height.equalToSuperview()
+        }
+        
+        backgroundImage.image = UIImage(imageLiteralResourceName: "cat").alpha(value: 0.1)
+        backgroundImage.backgroundColor = color
+        
         // MARK: - Ball styling
         
         ball = UIImageView(frame: .zero)
@@ -74,14 +94,14 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         
         scoreDisplay.snp.makeConstraints { (view) in
             view.height.equalTo(100)
-            view.width.equalTo(100)
+            view.width.equalTo(200)
             view.top.equalToSuperview()
             view.leading.equalToSuperview().offset(10)
         }
         
         scoreDisplay.text = String(score)
         scoreDisplay.textColor = .white
-        scoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
+        scoreDisplay.font = UIFont(name: "DS-Digital-Bold", size: 72)
         
         // MARK: - Button styling
         
@@ -116,7 +136,10 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         hiScoreDisplay.text = "High: \(hiScore)"
         hiScoreDisplay.textAlignment = .right
         hiScoreDisplay.textColor = .white
-        hiScoreDisplay.font = UIFont(name: "Futura-CondensedExtraBold", size: 72)
+        hiScoreDisplay.font = UIFont(name: "DS-Digital-Bold", size: 72)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
     }
     
     // MARK: - Collission Delegate
@@ -124,15 +147,17 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     func collisionBehavior(_ behavior: UICollisionBehavior, beganContactFor item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, at p: CGPoint) {
         print("Contact - \(identifier)")
         
-        if score > hiScore {
-            hiScore = score
-            prefs.setValue("\(hiScore)", forKey: "hiScoreStored")
-            hiScoreDisplay.text = "High: \(hiScore)"
+        // this only works because bottom is the only boundary with an identifier...if we add more boundaries with identifiers, we'll have to eff around with this & NSCopying
+        if identifier != nil {
+            if score > hiScore {
+                hiScore = score
+                prefs.setValue("\(hiScore)", forKey: "hiScoreStored")
+                hiScoreDisplay.text = "High: \(hiScore)"
+            }
+            
+            score = 0
+            scoreDisplay.text = String(score)
         }
-        
-        score = 0
-        scoreDisplay.text = String(score)
-        
     }
     
     // MARK: - Movement & Behavior
@@ -141,13 +166,19 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         score = 0
         scoreDisplay.text = String(score)
         
-        dynamicAnimator?.removeAllBehaviors()
+        if let dynamic = self.dynamicAnimator {
+            dynamic.removeAllBehaviors()
+        }
         
         snapping = UISnapBehavior(item: ball, snapTo: self.view.center)
         self.dynamicAnimator?.addBehavior(snapping!)
     }
     
     internal func fall() {
+        if let dynamic = self.dynamicAnimator {
+            dynamic.removeAllBehaviors()
+        }
+        
         falling = UIGravityBehavior(items: [ball])
         falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
         self.dynamicAnimator?.addBehavior(falling!)
@@ -161,6 +192,13 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
         
         colliding?.addBoundary(withIdentifier: "bottom" as NSCopying, from: CGPoint(x: view.frame.minX, y: view.frame.maxY), to: CGPoint(x: view.frame.maxX, y: view.frame.maxY))
+        
+        self.dynamicPhysics = UIDynamicItemBehavior(items: [ball])
+        dynamicPhysics.density = 0.1
+        dynamicPhysics.allowsRotation = true
+        dynamicPhysics.elasticity = 0.9
+        dynamicPhysics.addAngularVelocity(7.0, for: ball)
+        dynamicAnimator?.addBehavior(dynamicPhysics)
     }
     
     internal func move(view: UIView, to point: CGPoint) {
@@ -197,9 +235,8 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         let randomSaturation = CGFloat(arc4random_uniform(100)) * 0.01
         let randomBrightness = CGFloat(arc4random_uniform(100)) * 0.01
         //let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
-        let color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
+        color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
         
-        view.backgroundColor = color
         button.backgroundColor = color
         
         if randomBrightness < 0.49 {
@@ -238,7 +275,23 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         if ball.frame.contains(touchLocationInView) {
             print("You touched my ball!")
             pickUp(view: ball)
-            move(view: ball, to: touchLocationInView)
+            
+            var randomPush = CGFloat(arc4random_uniform(75))
+            let leftOrRight = CGFloat(arc4random_uniform(2))
+            
+            if leftOrRight == 1 {
+                randomPush *= -1
+            }
+            
+            move(view: ball, to: CGPoint(x: touchLocationInView.x + randomPush, y: touchLocationInView.y - 100 + randomPush))
+            
+            animator = UIViewPropertyAnimator(duration: 0.25, curve: .linear) {
+                self.backgroundImage.backgroundColor = self.color
+            }
+            
+            animator?.startAnimation()
+            
+            backgroundImage.backgroundColor = .black
         }
     }
     
@@ -246,19 +299,4 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         putDown(view: ball)
         fall()
     }
-    
-//    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        guard let touch = touches.first else { return }
-//        move(view: ball, to: touch.location(in: view))
-//    }
 }
-
-/*
- We want the ball to fly in a random x direction when it is clicked...
- 
- var randomHorizontal = Double(arc4random_uniform(11)) * 0.01
- let leftOrRight = Int(arc4random_uniform(2))
- if leftOrRight % 2 == 0 {
- randomHorizontal *= -1
- }
- */
