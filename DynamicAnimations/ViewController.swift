@@ -269,6 +269,16 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             }
             
             move(view: ball, to: CGPoint(x: touchLocationInView.x + randomPush, y: touchLocationInView.y - 100))
+            
+            if score > hiScore {
+                animator = UIViewPropertyAnimator(duration: 0.25, curve: .linear) {
+                    self.view.backgroundColor = .white
+                }
+                
+                animator?.startAnimation()
+                
+                self.view.backgroundColor = .black
+            }
         }
     }
     
