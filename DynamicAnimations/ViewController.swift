@@ -180,7 +180,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
         
         falling = UIGravityBehavior(items: [ball])
-        falling?.gravityDirection = CGVector(dx: 0, dy: 0.7)
+        falling?.gravityDirection = CGVector(dx: 0, dy: 1.5)
         self.dynamicAnimator?.addBehavior(falling!)
         
         colliding = UICollisionBehavior(items: [ball])
