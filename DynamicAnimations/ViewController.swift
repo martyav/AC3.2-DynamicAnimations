@@ -110,14 +110,16 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         self.view.addSubview(button)
         
         button.snp.makeConstraints { (view) in
-            view.width.equalTo(120)
-            view.height.equalTo(60)
+            view.width.equalTo(100)
+            view.height.equalTo(50)
             view.trailing.equalToSuperview().inset(16)
-            view.top.equalToSuperview().offset(16)
+            view.centerY.equalTo(scoreDisplay)
         }
         
         button.setTitle("Reset", for: .normal)
         button.backgroundColor = .white
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 1
         button.setTitleColor(.black, for: .normal)
         
         // MARK: - HiScore styling
@@ -194,7 +196,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         colliding?.addBoundary(withIdentifier: "bottom" as NSCopying, from: CGPoint(x: view.frame.minX, y: view.frame.maxY), to: CGPoint(x: view.frame.maxX, y: view.frame.maxY))
         
         self.dynamicPhysics = UIDynamicItemBehavior(items: [ball])
-        dynamicPhysics.density = 0.1
         dynamicPhysics.allowsRotation = true
         dynamicPhysics.elasticity = 0.9
         dynamicPhysics.addAngularVelocity(7.0, for: ball)
