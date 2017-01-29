@@ -24,7 +24,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var snapping: UISnapBehavior?
     var falling: UIGravityBehavior?
     var colliding: UICollisionBehavior?
-    var pushing: UIPushBehavior?
     var dynamicPhysics: UIDynamicItemBehavior!
     
     var score = 0
@@ -55,7 +54,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: - Styling
     
     func setUpViews() {
-        // bg image
+        // BG image
         
         backgroundImage = UIImageView(frame: .zero)
         backgroundImage.translatesAutoresizingMaskIntoConstraints = false
@@ -110,14 +109,16 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         self.view.addSubview(button)
         
         button.snp.makeConstraints { (view) in
-            view.width.equalTo(120)
-            view.height.equalTo(60)
+            view.width.equalTo(100)
+            view.height.equalTo(50)
             view.trailing.equalToSuperview().inset(16)
-            view.top.equalToSuperview().offset(16)
+            view.centerY.equalTo(scoreDisplay)
         }
         
         button.setTitle("Reset", for: .normal)
         button.backgroundColor = .white
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 1
         button.setTitleColor(.black, for: .normal)
         
         // MARK: - HiScore styling
@@ -194,7 +195,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         colliding?.addBoundary(withIdentifier: "bottom" as NSCopying, from: CGPoint(x: view.frame.minX, y: view.frame.maxY), to: CGPoint(x: view.frame.maxX, y: view.frame.maxY))
         
         self.dynamicPhysics = UIDynamicItemBehavior(items: [ball])
-        dynamicPhysics.density = 0.1
         dynamicPhysics.allowsRotation = true
         dynamicPhysics.elasticity = 0.9
         dynamicPhysics.addAngularVelocity(7.0, for: ball)
@@ -232,19 +232,11 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         SystemSoundID.playFileNamed(fileName: "beep", withExtenstion: "mp3")
         
         let randomHue = CGFloat(arc4random_uniform(100)) * 0.01
-        let randomSaturation = CGFloat(arc4random_uniform(100)) * 0.01
-        let randomBrightness = CGFloat(arc4random_uniform(100)) * 0.01
-        //let color = UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+        let randomSaturation = CGFloat(arc4random_uniform(50)) * 0.01
+        let randomBrightness = (CGFloat(arc4random_uniform(50)) + 50.0) * 0.01
         color = UIColor(hue: randomHue, saturation: randomSaturation, brightness: randomBrightness, alpha: 1.0)
         
         button.backgroundColor = color
-        
-        if randomBrightness < 0.49 {
-            button.setTitleColor(.white, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
-        
         scoreDisplay.textColor = color
         hiScoreDisplay.textColor = color
         score += 1
