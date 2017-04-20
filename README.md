@@ -6,4 +6,4 @@ Disco Clicker!!
 * High scores automatically saved!
 * Random colors & (non-random) sound effects!
  
- <img height="200" alt="first screen" src="http://i63.tinypic.com/2qnxk4p.png">
+ <img width = "200" alt = "first screen" src="http://i63.tinypic.com/2qnxk4p.png">
