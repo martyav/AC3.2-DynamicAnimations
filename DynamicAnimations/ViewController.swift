@@ -88,7 +88,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
         
         ball.image = UIImage(imageLiteralResourceName: "disco").alpha(value: 0.5)
-        ball.backgroundColor = .white
         ball.layer.cornerRadius = 50
         
         // MARK: - Score styling

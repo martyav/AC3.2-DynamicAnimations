@@ -7,16 +7,44 @@
 //
 
 import UIKit
+import SnapKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    var title: UILabel?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        let rootVC = ViewController()
-        self.window?.rootViewController = rootVC
-        self.window?.makeKeyAndVisible()
+        self.title = OutlinedText(frame: .zero)
+        
+        if let window = self.window,
+            let title = self.title {
+            let rootVC = ViewController()
+            
+            window.rootViewController = rootVC
+            window.makeKeyAndVisible()
+            
+            title.translatesAutoresizingMaskIntoConstraints = false
+            window.addSubview(title)
+            
+            title.snp.makeConstraints { view in
+                view.center.equalToSuperview()
+            }
+            
+            title.text = "DiSCO CLiCKeR"
+            title.textColor = .white
+            title.alpha = 1
+            title.font = UIFont(name: "DS-Digital-Bold", size: 50)
+            
+            UIView.animate(withDuration: 2, animations: { view in
+                title.alpha = 0
+            }, completion: { view in
+                title.removeFromSuperview()
+            })
+
+        }
         
         return true
     }
