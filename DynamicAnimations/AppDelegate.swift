@@ -7,39 +7,47 @@
 //
 
 import UIKit
+import SnapKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    var title: UILabel?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        let rootVC = ViewController()
-        self.window?.rootViewController = rootVC
-        self.window?.makeKeyAndVisible()
+        self.title = OutlinedText(frame: .zero)
+        
+        if let window = self.window,
+            let title = self.title {
+            let rootVC = ViewController()
+            
+            window.rootViewController = rootVC
+            window.makeKeyAndVisible()
+            
+            title.translatesAutoresizingMaskIntoConstraints = false
+            window.addSubview(title)
+            
+            title.snp.makeConstraints { view in
+                view.center.equalToSuperview()
+            }
+            
+            title.text = "DiSCO CLiCKeR"
+            title.textColor = .white
+            title.alpha = 1
+            title.font = UIFont(name: "DS-Digital-Bold", size: 50)
+            
+            UIView.animate(withDuration: 2, animations: { view in
+                title.alpha = 0
+            }, completion: { view in
+                title.removeFromSuperview()
+            })
+
+        }
         
         return true
     }
-    
-    /*
-     class AppDelegate: UIResponder, UIApplicationDelegate {
-     
-     var window: UIWindow?
-     
-     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-     
-     self.window = UIWindow(frame: UIScreen.main.bounds)
-     let rootVC = EmptyDeckViewController()
-     let navController = UINavigationController(rootViewController: rootVC)
-     
-     self.window?.rootViewController = navController
-     self.window?.makeKeyAndVisible()
-     
-     
-     return true
-     }
-
- */
     
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

@@ -11,13 +11,16 @@ import SnapKit
 import AudioToolbox
 
 class ViewController: UIViewController, UICollisionBehaviorDelegate {
-    var color = UIColor.black
     var backgroundImage: UIImageView!
+    
+    // Views
     
     var ball: UIImageView!
     var scoreDisplay: OutlinedText!
     var hiScoreDisplay: OutlinedText!
     var button: UIButton!
+    
+    // Animation
     
     var animator: UIViewPropertyAnimator? = nil
     var dynamicAnimator: UIDynamicAnimator? = nil
@@ -26,10 +29,13 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     var colliding: UICollisionBehavior?
     var dynamicPhysics: UIDynamicItemBehavior!
     
-    var score = 0
-    var hiScore = 0
+    // Scoring
     
     let prefs = UserDefaults.standard
+    
+    var score = 0
+    var hiScore = 0
+    var color = UIColor.black
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +44,7 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
             print("The user has a high score defined: " + hiScoreStored)
             hiScore = Int(hiScoreStored)!
         } else {
-         //   Nothing stored in NSUserDefaults yet. Set a value.
+         // Nothing stored in NSUserDefaults yet. Set a value.
             prefs.setValue(hiScore, forKey: "hiScoreStored")
         }
         
@@ -82,7 +88,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         }
         
         ball.image = UIImage(imageLiteralResourceName: "disco").alpha(value: 0.5)
-        ball.backgroundColor = .white
         ball.layer.cornerRadius = 50
         
         // MARK: - Score styling
@@ -138,9 +143,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         hiScoreDisplay.textAlignment = .right
         hiScoreDisplay.textColor = .white
         hiScoreDisplay.font = UIFont(name: "DS-Digital-Bold", size: 72)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
     }
     
     // MARK: - Collission Delegate
